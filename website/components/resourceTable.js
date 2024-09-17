@@ -10,6 +10,11 @@ import Alert from "@mui/material/Alert";
 import { useState, useEffect } from "react";
 import CreateResource from "../components/createResource";
 
+/*
+Code for the resource table in the resources page.
+setHwsets updates the list of HWSets on the initial rendering of the page
+*/
+
 const ResourceTable = (props) => {
   const { hwsets, setHwsets } = props;
   const [error, setError] = useState(false);
@@ -20,6 +25,9 @@ const ResourceTable = (props) => {
       .then((data) => setHwsets(data.result));
   };
 
+  /*
+  Get the list of HWSets on the first rendering of the page
+  */
   useEffect(() => {
     initHWSets();
   }, []);
@@ -32,6 +40,7 @@ const ResourceTable = (props) => {
     const name = data.get("name");
     const capacity = data.get("capacity");
 
+    // If either field is empty, set error prop to true to highlight empty fields and do not call the API
     if (!name || !capacity) {
       setError(true);
       return;
@@ -48,6 +57,7 @@ const ResourceTable = (props) => {
         return response.text();
       })
       .then((data) => {
+        //It will only return a string if there is an error with the API call, with the string having the error message sent by the backend
         if (typeof data === "string") {
           setError(data);
         } else {
@@ -85,7 +95,10 @@ const ResourceTable = (props) => {
           </TableBody>
         </Table>
       </TableContainer>
-      {typeof error === "string" && <Alert severity="error">{error}</Alert>}
+      {
+        // Display an error message if the HWSet already exists
+        typeof error === "string" && <Alert severity="error">{error}</Alert>
+      }
     </Paper>
   );
 };
